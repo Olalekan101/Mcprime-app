@@ -29,8 +29,8 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Tab One',
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+          title: 'Admin Section',
+          tabBarIcon: ({ color }) => <TabBarIcon name="folder" color={color} />,
           headerRight: () => (
             <Link href="/modal" asChild>
               <Pressable>
@@ -48,10 +48,24 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="two"
+        name="staff"
         options={{
-          title: 'Tab Two',
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+          title: 'Staff Section',
+          tabBarIcon: ({ color }) => <TabBarIcon name="apple" color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="sheet"
+        options={{
+          title: 'Score Sheet',
+          tabBarIcon: ({ color }) => <TabBarIcon name="apple" color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="reportcard"
+        options={{
+          title: 'Report Card',
+          tabBarIcon: ({ color }) => <TabBarIcon name="apple" color={color} />,
         }}
       />
     </Tabs>
