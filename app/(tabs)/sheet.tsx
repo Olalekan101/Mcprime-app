@@ -1,11 +1,65 @@
+import LottieView from 'lottie-react-native';
 import React, { useState } from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, ScrollView } from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity, ScrollView, Linking, Alert, Button } from 'react-native';
 import { WebView } from 'react-native-webview';
+// import Lottieloading from '@/assets/lottie/loading.json'
+
 
 export default function TabThreeScreen() {
   const [isWebViewVisible, setIsWebViewVisible] = useState(false);
   const [selectedClass, setSelectedClass] = useState('');
   const [webViewUri, setWebViewUri] = useState('');
+  const [isError, setIsError] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const handleReload = () => {
+    setIsError(false);
+    setIsLoading(true);
+  };
+
+
+  const getCurrentSessionAndTerm = () => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = now.getMonth() + 1; // JavaScript months are 0-indexed
+
+    let term = '';
+    let session = '';
+
+    if (month >= 9 || month <= 12) {
+      // September to December
+      term = '1st Term';
+      session = `${year}/${year + 1}`;
+    } else if (month >= 1 && month <= 3) {
+      // January to March
+      term = '2nd Term';
+      session = `${year - 1}/${year}`;
+    } else if (month >= 4 && month <= 7) {
+      // April to July
+      term = '3rd Term';
+      session = `${year - 1}/${year}`;
+    }
+
+    return `${session} - ${term}`;
+  };
+
+  const academicSession = getCurrentSessionAndTerm();
+
+
+  const handleShouldStartLoadWithRequest = (request:any) => {
+    const url = request.url;
+
+    // Check if the URL is a download link by inspecting the URL pattern or headers
+    if (url.endsWith('.pdf') || url.endsWith('.zip') || url.includes('download')) {
+      // If it is a download link, open it in the default browser
+      Linking.openURL(url).catch((err) =>
+        Alert.alert("Error", "Failed to open URL: " + err.message)
+      );
+      return false; // Prevent the WebView from loading the download URL
+    }
+    return true; // Allow the WebView to load other URLs
+  };
+
 
   // List of available classes (customize this list as per your needs)
   const classOptions = [
@@ -29,25 +83,25 @@ export default function TabThreeScreen() {
         setWebViewUri('https://sites.google.com/view/mcprime-cache-score-sheet/score-sheets');
         break;
       case 'Nursery 1':
-        setWebViewUri('https://example.com/nursery1');
+        setWebViewUri('https://sites.google.com/view/mcprime-nursery-1-scoresheet/score-sheets');
         break;
       case 'Nursery 2':
-        setWebViewUri('https://example.com/nursery2');
+        setWebViewUri('https://sites.google.com/view/mcprime-nursery-2-scoresheet/score-sheets');
         break;
       case 'Primary 1':
-        setWebViewUri('https://example.com/primary1');
+        setWebViewUri('https://sites.google.com/view/mcprime-primary-1-scoresheet/score-sheets');
         break;
       case 'Primary 2':
-        setWebViewUri('https://example.com/primary2');
+        setWebViewUri('https://sites.google.com/view/mcprime-primary-2-scoresheet/score-sheets');
         break;
       case 'Primary 3':
-        setWebViewUri('https://example.com/primary3');
+        setWebViewUri('https://sites.google.com/view/mcprime-primary-3-scoresheet/score-sheets');
         break;
       case 'Primary 4':
-        setWebViewUri('https://example.com/primary4');
+        setWebViewUri('https://sites.google.com/view/mcprime-primary-4-scoresheet/score-sheets');
         break;
       case 'Primary 5':
-        setWebViewUri('https://example.com/primary5');
+        setWebViewUri('https://sites.google.com/view/mcprime-primary-5-scoresheet/score-sheets');
         break;
       default:
         setWebViewUri('');
@@ -69,7 +123,21 @@ export default function TabThreeScreen() {
       {!isWebViewVisible ? (
         // Display class list
         <View style={styles.classListContainer}>
-          <Text style={styles.title}>Select a Class</Text>
+            <View style={styles.loadingContainer}>
+            <LottieView
+              // source={Lottieloading} // Replace with your Lottie file path
+              source={require('@/assets/loading.json')} // Replace with your Lottie file path
+              autoPlay
+              loop
+              style={{
+                width: 200,
+                height: 200,
+                // backgroundColor: '#eee',
+              }}
+            />
+          </View>
+          <Text style={styles.title}>{academicSession} Score Sheet</Text>
+          <Text style={styles.titlex}>Please select a class.</Text>
           <ScrollView contentContainerStyle={styles.classGrid}>
             {classOptions.map((classOption) => (
               <TouchableOpacity
@@ -83,16 +151,39 @@ export default function TabThreeScreen() {
           </ScrollView>
         </View>
       ) : (
-        // Show WebView when a class is selected
         <View style={styles.webViewContainer}>
-          <TouchableOpacity style={styles.goBackButton} onPress={handleGoBack}>
+        {isError ? (
+          <View style={styles.errorContainer}>
+
+            <Text style={styles.title}>Failed to load. Please check your connection.</Text>
+      <TouchableOpacity
+                style={styles.classButton}
+                onPress={handleReload}
+              >
+                <Text style={styles.classButtonText}>Application Form</Text>
+              </TouchableOpacity>
+          </View>
+          
+        ) : (
+          <>
+            <TouchableOpacity style={styles.goBackButton} onPress={handleGoBack}>
             <Text style={styles.classButtonText}>Go Back</Text>
           </TouchableOpacity>
           <WebView
             style={styles.webview}
             source={{ uri: webViewUri }}
+            cacheMode='LOAD_CACHE_ELSE_NETWORK'
+            onShouldStartLoadWithRequest={handleShouldStartLoadWithRequest}
+            startInLoadingState
+            onLoadStart={() => setIsLoading(true)}
+            onLoadEnd={() => setIsLoading(false)}
+            onError={() => setIsError(true)}
+
+
           />
-        </View>
+                  </>
+        )}
+      </View>
       )}
     </View>
   );
@@ -103,15 +194,30 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    color: '#FAF7F0',
+    backgroundColor: '#1e2328', // Black background
+    
+
   },
   classListContainer: {
     alignItems: 'center',
     marginTop: 20,
   },
   title: {
-    fontSize: 24,
-    fontWeight: 'bold',
+    fontSize: 14,
+    fontWeight: 'light',
+    // marginBottom: 4,
+    color: '#FAF7F0',
+    marginTop:10,
+    fontStyle:'italic'
+  },
+  titlex: {
+    fontSize: 12,
+    fontWeight: 'light',
     marginBottom: 4,
+    color: '#FAF7F0',
+    // marginTop:10,
+    fontStyle:'italic'
   },
   classGrid: {
     flexDirection: 'row',
@@ -157,5 +263,14 @@ const styles = StyleSheet.create({
   webview: {
     flex: 1,
     width: '100%',
+  },
+  loadingContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });

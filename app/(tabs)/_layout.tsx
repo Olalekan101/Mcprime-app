@@ -12,7 +12,7 @@ function TabBarIcon(props: {
   name: React.ComponentProps<typeof FontAwesome>['name'];
   color: string;
 }) {
-  return <FontAwesome size={28} style={{ marginBottom: -3 }} {...props} />;
+  return <FontAwesome size={14} style={{ marginBottom: -3 }} {...props} />;
 }
 
 export default function TabLayout() {
@@ -30,9 +30,20 @@ export default function TabLayout() {
         name="index"
         options={{
           title: 'Admin Section',
-          tabBarIcon: ({ color }) => <TabBarIcon name="folder" color={color} />,
+          headerStyle:{backgroundColor:'#222831'},
+          headerTintColor:'#EEEEEE',
+          headerTitleStyle:{fontSize:16,fontStyle:"italic"},
+          // headerStatusBarHeight:0,
+          
+          
+          tabBarIcon: ({ color }) => <TabBarIcon name="minus-square" color={color} />,
+          tabBarInactiveBackgroundColor:'#1e2328',
+          tabBarActiveTintColor:'#1e2328',
+         
+          
           headerRight: () => (
-            <Link href="/modal" asChild>
+
+            <Link href="/1frame" asChild>
               <Pressable>
                 {({ pressed }) => (
                   <FontAwesome
@@ -44,28 +55,45 @@ export default function TabLayout() {
                 )}
               </Pressable>
             </Link>
-          ),
+          ),        
         }}
       />
       <Tabs.Screen
-        name="staff"
+        name="linksapp"
+        
         options={{
-          title: 'Staff Section',
-          tabBarIcon: ({ color }) => <TabBarIcon name="apple" color={color} />,
+          title: 'Links',
+          tabBarIcon: ({ color }) => <TabBarIcon name="link" color={color} />,
+          tabBarInactiveBackgroundColor:'#1e2328',
+          tabBarActiveTintColor:'#1e2328',
+          headerStyle:{backgroundColor:'#222831'},
+          headerTintColor:'#EEEEEE',
+          headerTitleStyle:{fontSize:16,fontStyle:"italic"},
         }}
       />
       <Tabs.Screen
         name="sheet"
+        
         options={{
           title: 'Score Sheet',
-          tabBarIcon: ({ color }) => <TabBarIcon name="apple" color={color} />,
+          tabBarIcon: ({ color }) => <TabBarIcon name="minus-square" color={color} />,
+          tabBarInactiveBackgroundColor:'#1e2328',
+          tabBarActiveTintColor:'#1e2328',
+          headerStyle:{backgroundColor:'#222831'},
+          headerTintColor:'#EEEEEE',
+          headerTitleStyle:{fontSize:16,fontStyle:"italic"},
         }}
       />
       <Tabs.Screen
         name="reportcard"
         options={{
           title: 'Report Card',
-          tabBarIcon: ({ color }) => <TabBarIcon name="apple" color={color} />,
+          tabBarIcon: ({ color }) => <TabBarIcon name="minus-square" color={color} />,
+          tabBarInactiveBackgroundColor:'#1e2328',
+          tabBarActiveTintColor:'#1e2328',
+          headerStyle:{backgroundColor:'#222831'},
+          headerTintColor:'#EEEEEE',
+          headerTitleStyle:{fontSize:16,fontStyle:"italic"},
         }}
       />
     </Tabs>
